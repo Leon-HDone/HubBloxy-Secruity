@@ -1,6 +1,6 @@
 local StarterGui = game:GetService("StarterGui")
 
--- Liste potenziell gefährlicher Funktionen und ihre Wrapper
+
 local sensitiveKeywords = {
     getgenv = "Zugriff auf globale Umgebung",
     getfenv = "Zugriff auf Funktionsumgebung",
@@ -23,7 +23,7 @@ local sensitiveKeywords = {
     collectgarbage = "Umgebungsanalyse"
 }
 
--- GUI-Setup
+
 local screenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
 screenGui.Name = "SandboxAnalyzerGUI"
 
@@ -62,7 +62,7 @@ analyzeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 analyzeBtn.Font = Enum.Font.GothamBold
 analyzeBtn.TextScaled = true
 
--- Erstellt ein sicheres Environment mit Wrappern
+
 local function createSandbox()
     local env = {}
     -- Kopiere sichere Standardfunktionen
@@ -71,7 +71,7 @@ local function createSandbox()
             env[k] = v
         end
     end
-    -- Standardbibliotheken
+   
     env.math = math
     env.string = string
     env.table = table
@@ -80,7 +80,7 @@ local function createSandbox()
     env.print = print
     env.pcall = pcall
     env.error = error
-    -- Wrapper für sensible Funktionen
+   
     for func, reason in pairs(sensitiveKeywords) do
         env[func] = function(...)
             warn("[SandboxAnalyzer] Nutzte sensible Funktion: " .. func .. " → " .. reason)
@@ -90,7 +90,7 @@ local function createSandbox()
     return env
 end
 
--- Analysiert statisch auf Blacklist-Treffer
+
 local function staticAnalyze(scriptText)
     local found = {}
     for keyword, _ in pairs(sensitiveKeywords) do
@@ -101,7 +101,7 @@ local function staticAnalyze(scriptText)
     return found
 end
 
--- Button-Verhalten
+
 analyzeBtn.MouseButton1Click:Connect(function()
     local code = inputBox.Text
     -- Statische Analyse
@@ -111,7 +111,7 @@ analyzeBtn.MouseButton1Click:Connect(function()
     else
         StarterGui:SetCore("SendNotification", {Title = "✅ Statisch passt", Text = "Keine offensichtlichen Keywords", Duration = 3})
     end
-    -- Sandbox-Ausführung
+   
     local func, err = loadstring(code)
     if not func then
         warn("Fehler beim Parsen: ", err)
